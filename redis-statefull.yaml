@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet  
+metadata:
+  name: redis-stateful
+  labels:
+    name: redis-stateful
+    app: demo-voting-app
+spec:
+  serviceName: redis
+  replicas: 1
+  selector: 
+    matchLabels:
+      name: redis-pod
+      app: demo-voting-app
+  template:
+    metadata: 
+      labels:
+        name: redis-pod
+        app: demo-voting-app
+    spec:
+      containers:
+          - name: redis
+            image: redis
+            ports:
+              - containerPort: 6379
+            volumeMounts:
+              - name: data
+                mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec: 
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
