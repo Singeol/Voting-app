@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository: dockersamples/examplevotingapp_vote
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+app: demo-voting-app

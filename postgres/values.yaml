@@ -1,0 +1,11 @@
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5432
+
+storageSize: 1Gi
+
+app: demo-voting-app

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet  
+metadata:
+  name: {{ .Release.Name }}-stateful
+  labels:
+    name: {{ .Release.Name }}-stateful
+    app: {{ .Values.app }}
+spec:
+  serviceName: {{ .Release.Name }}
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels:
+      name: {{ .Release.Name }}-pod
+      app: {{ .Values.app }}
+  template:
+    metadata: 
+      labels:
+        name: {{ .Release.Name }}-pod
+        app: {{ .Values.app }}
+    spec:
+      containers:
+          - name: {{ .Release.Name }}
+            image: {{ .Values.image.repository }}
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            ports:
+              - containerPort: {{ .Values.service.port }}
+            volumeMounts:
+            {{- include "redis-chart.mounts" . | nindent 12}}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec: 
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.storageSize }}

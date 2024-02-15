@@ -1,0 +1,7 @@
+replicaCount: 1
+
+image:
+  repository: dockersamples/examplevotingapp_worker
+  pullPolicy: IfNotPresent
+
+app: demo-voting-app

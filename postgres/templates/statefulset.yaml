@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-stateful
+  labels:
+    name: {{ .Release.Name }}-stateful
+    app: {{ .Values.app }}
+spec:
+  serviceName: {{ .Release.Name }}
+  replicas: 1
+  selector:
+    matchLabels:  
+      name: {{ .Release.Name }}-pod
+      app: {{ .Values.app }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}-pod
+        app: {{ .Values.app }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image.repository }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          envFrom:
+          - secretRef:
+              name: {{ .Release.Name }}-secret
+          volumeMounts:
+          {{- include "postgres-chart.mounts" . | nindent 12}}
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]  
+        resources:
+          requests:
+            storage: {{ .Values.storageSize }}
